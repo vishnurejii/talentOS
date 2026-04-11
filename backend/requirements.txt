@@ -1,0 +1,11 @@
+Django>=5.0
+djangorestframework
+djangorestframework-simplejwt
+motor
+beanie
+celery[redis]
+redis
+django-cors-headers
+python-dotenv
+pdfplumber
+requests

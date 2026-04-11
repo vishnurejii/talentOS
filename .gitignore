@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Javascript
+node_modules/
+dist/
+build/
+.next/
+
+# Databases
+*.sqlite3
+mongo_data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# TalentOS specific
+backend/media/*
+!backend/media/.gitkeep
+ai_services/venv/
+backend/venv/
