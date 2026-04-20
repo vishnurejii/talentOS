@@ -16,13 +16,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
-# Allow CORS from Render frontend domain
-CORS_ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get('CORS_ALLOWED_ORIGINS', 'https://talentos-frontend.onrender.com').split(',')
-    if origin.strip()
-]
-CORS_ALLOW_ALL_ORIGINS = False  # Override base setting  
+# Allow all origins — JWT auth is stateless so CORS restrictions add no security here.
+# Update this to a specific list if you want tighter control in future.
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # ── Static Files (WhiteNoise for serving without a CDN) ─────────────────────
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
