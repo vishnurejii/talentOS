@@ -3,7 +3,7 @@
  * Central place for all API calls against the Django backend.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8002/api';
 
 function getToken() {
   return localStorage.getItem('token');
@@ -88,7 +88,7 @@ export const api = {
   finishExam: (sessionId) =>
     request('/exams/finish/', { method: 'POST', body: JSON.stringify({ session_id: sessionId }) }),
 
-  // ── Rankings / Dashboard ──────────────────────────────────────────────────
+  // ── Rankings / Dashboard / Admin ──────────────────────────────────────────
   hrDashboard: () => request('/hr/dashboard/'),
   jobRankings: (jobId) => request(`/hr/jobs/${jobId}/rankings/`),
   updateAppStatus: (appId, newStatus) =>
@@ -96,6 +96,9 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ status: newStatus }),
     }),
+  getProctoringLogs: () => request('/exams/admin/violations/'),
+  getJobQuestions: (jobId) => request(`/jobs/${jobId}/questions/`),
+  getExamSession: (sessionId) => request(`/exams/admin/sessions/${sessionId}/`),
   candidateDashboard: () => request('/candidate/dashboard/'),
 };
 

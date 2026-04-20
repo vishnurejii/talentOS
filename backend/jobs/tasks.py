@@ -14,10 +14,12 @@ try:
     from models.user import CustomUser
     from models.job import Job
     from models.application import Application
-    from models.exam import Question, ExamSession
+    from models.exam import Question, ExamSession, QuestionTypeEnum
 except ImportError:
     from shared_models.user import CustomUser
     from shared_models.job import Job
+    from shared_models.application import Application
+    from shared_models.exam import Question, ExamSession, QuestionTypeEnum
     from shared_models.application import Application
     from shared_models.exam import Question, ExamSession
 
@@ -66,7 +68,7 @@ def parse_cv_task(application_id: str):
             await app_doc.save()
             return None
 
-    parsed = sync_db_call(_run())
+    parsed = sync_db_call(_run)
 
     if parsed:
         # Chain to ATS scoring directly
@@ -117,7 +119,7 @@ def score_ats_task(application_id: str, parsed_data: dict):
             app_doc.status = "FAILED"
             await app_doc.save()
 
-    sync_db_call(_run())
+    sync_db_call(_run)
     return {"application_id": application_id, "status": "scored"}
 
 
@@ -138,6 +140,14 @@ def generate_exam_task(job_id: str):
 
         # Get questions from Generative AI (Cloud-based)
         skills = job.skills_required or []
+        logger.info(f"Generating questions for job {job_id} with skills: {skills}")
+        
+        # Check if questions already exist to avoid duplication
+        existing_count = await Question.find(Question.job.id == job.id).count()
+        if existing_count >= 5:
+            logger.info(f"Job {job_id} already has {existing_count} questions. Skipping.")
+            return
+
         library = ai_logic.gemini_generate_questions(job.title, skills)
         
         # Handle different key names from AI response vs local bank
@@ -149,7 +159,7 @@ def generate_exam_task(job_id: str):
             doc = Question(
                 job=job,
                 question_text=q.get("question") or q.get("text"),
-                question_type="MCQ",
+                question_type=QuestionTypeEnum.MCQ,
                 options=q.get("options"),
                 correct_option_index=q.get("correct_index") or q.get("correct"),
                 points=q.get("points", 5)
@@ -161,7 +171,7 @@ def generate_exam_task(job_id: str):
             doc = Question(
                 job=job,
                 question_text=q.get("question") or q.get("text"),
-                question_type="CODING",
+                question_type=QuestionTypeEnum.CODING,
                 starter_code=q.get("starter_code") or q.get("starter"),
                 language=q.get("language", "python"),
                 test_cases=q.get("test_cases", []),
@@ -170,8 +180,18 @@ def generate_exam_task(job_id: str):
             await doc.insert()
             
         logger.info(f"Generated {len(mcqs)} MCQs and {len(coding_probs)} Coding questions for job {job_id}")
+        
+        # Double check if any questions were created. If not, force a generic fallback.
+        final_count = await Question.find(Question.job.id == job.id).count()
+        if final_count == 0:
+            logger.warning(f"Failed to generate questions for {job_id}. Forcing generic bank.")
+            fallback = ai_logic.get_questions_for_skills(["python", "general"])
+            for q in (fallback.get("MCQ") or []):
+                await Question(job=job, question_text=q.get("text"), question_type=QuestionTypeEnum.MCQ, options=q.get("options"), correct_option_index=q.get("correct"), points=5).insert()
+            for q in (fallback.get("CODING") or []):
+                await Question(job=job, question_text=q.get("text"), question_type=QuestionTypeEnum.CODING, starter_code=q.get("starter"), language=q.get("language", "python"), test_cases=q.get("test_cases", []), points=20).insert()
 
-    sync_db_call(_run())
+    sync_db_call(_run)
     return {"job_id": job_id, "status": "generated"}
 
 
@@ -194,4 +214,4 @@ def recompute_rankings_task(job_id: str):
 
         logger.info(f"Ranked {len(apps)} applications for job {job_id}")
 
-    sync_db_call(_run())
+    sync_db_call(_run)

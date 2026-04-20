@@ -1,0 +1,58 @@
+services:
+  # ── Django Backend API ────────────────────────────────────────────────────
+  - type: web
+    name: talentos-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: MONGO_URI
+        sync: false          # Set this manually in Render dashboard
+      - key: SECRET_KEY
+        sync: false          # Set this manually in Render dashboard
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings_prod
+      - key: JUDGE0_URL
+        value: https://ce.judge0.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://talentos-frontend.onrender.com   # Update after deploying frontend
+    healthCheckPath: /api/jobs/
+
+  # ── Node.js Realtime (WebSocket) Server ───────────────────────────────────
+  - type: web
+    name: talentos-realtime
+    runtime: node
+    rootDir: realtime
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18.0.0
+      - key: JWT_SECRET
+        sync: false          # Set this manually in Render dashboard
+
+  # ── React Frontend (Static Site) ─────────────────────────────────────────
+  - type: web
+    name: talentos-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false          # Set to https://talentos-backend.onrender.com
+      - key: VITE_WS_URL
+        sync: false          # Set to wss://talentos-realtime.onrender.com

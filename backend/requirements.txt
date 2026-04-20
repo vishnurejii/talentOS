@@ -3,9 +3,10 @@ djangorestframework
 djangorestframework-simplejwt
 motor
 beanie
-celery[redis]
-redis
-django-cors-headers
+celery
 python-dotenv
 pdfplumber
 requests
+gunicorn
+whitenoise
+django-cors-headers

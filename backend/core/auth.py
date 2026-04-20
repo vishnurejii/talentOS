@@ -20,7 +20,7 @@ class BeanieJWTAuthentication(JWTAuthentication):
             )
 
         try:
-            user = sync_db_call(CustomUser.get(user_id))
+            user = sync_db_call(lambda: CustomUser.get(user_id))
         except Exception:
             raise AuthenticationFailed('User lookup failed', code='user_not_found')
 

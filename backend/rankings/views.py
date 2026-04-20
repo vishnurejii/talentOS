@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.db import sync_db_call, to_dict
 from rest_framework import status
 import sys
+from bson import ObjectId
 
 try:
     from models.application import Application
@@ -23,21 +24,27 @@ class JobRankingsView(APIView):
         if getattr(request.user, 'role', None) != "HR":
             return Response({"error": "Only HR can view rankings"}, status=status.HTTP_403_FORBIDDEN)
 
-        job = sync_db_call(Job.get(job_id))
+        job = sync_db_call(lambda: Job.get(job_id))
         if not job:
             return Response({"error": "Job not found"}, status=404)
 
-        apps = sync_db_call(
-            Application.find(Application.job.id == job.id).sort("-final_score").to_list()
+        apps = sync_db_call(lambda: 
+            Application.find(Application.job.id == ObjectId(job_id)).sort("-final_score").to_list()
         )
 
         ranked = []
         for rank, app in enumerate(apps, start=1):
             candidate = None
             try:
-                candidate = sync_db_call(app.candidate.fetch()) if hasattr(app.candidate, 'fetch') else app.candidate
+                candidate = sync_db_call(lambda: app.candidate.fetch()) if hasattr(app.candidate, 'fetch') else app.candidate
             except:
                 pass
+
+            # Find exam session for this candidate and job to get the session_id and warnings
+            session = sync_db_call(lambda: ExamSession.find_one(
+                ExamSession.job.id == job.id,
+                ExamSession.candidate.id == (candidate.id if candidate else None)
+            ))
 
             ranked.append({
                 "rank": rank,
@@ -49,6 +56,8 @@ class JobRankingsView(APIView):
                 "final_score": app.final_score,
                 "status": app.status,
                 "applied_at": str(app.applied_at),
+                "exam_session_id": str(session.id) if session else None,
+                "total_warnings": getattr(session, 'warning_count', 0) if session else 0
             })
 
         return Response(to_dict({
@@ -67,13 +76,14 @@ class HRDashboardView(APIView):
         if getattr(request.user, 'role', None) != "HR":
             return Response({"error": "Only HR can access dashboard"}, status=status.HTTP_403_FORBIDDEN)
 
-        jobs = sync_db_call(
-            Job.find(Job.created_by.id == request.user.id).to_list()
+        # Convert to ObjectId for raw query or use Beanie query builder correctly
+        jobs = sync_db_call(lambda: 
+            Job.find({"created_by.$id": ObjectId(request.user.id)}).to_list()
         )
 
         dashboard = []
         for job in jobs:
-            apps = sync_db_call(
+            apps = sync_db_call(lambda: 
                 Application.find(Application.job.id == job.id).to_list()
             )
 
@@ -107,12 +117,12 @@ class UpdateApplicationStatusView(APIView):
         if new_status not in ("SHORTLISTED", "REJECTED"):
             return Response({"error": "Status must be SHORTLISTED or REJECTED"}, status=400)
 
-        app_doc = sync_db_call(Application.get(app_id))
+        app_doc = sync_db_call(lambda: Application.get(app_id))
         if not app_doc:
             return Response({"error": "Application not found"}, status=404)
 
         app_doc.status = new_status
-        sync_db_call(app_doc.save())
+        sync_db_call(lambda: app_doc.save())
 
         return Response(to_dict({"id": str(app_doc.id), "status": app_doc.status}))
 
@@ -125,15 +135,15 @@ class CandidateDashboardView(APIView):
         if getattr(request.user, 'role', None) != "CANDIDATE":
             return Response({"error": "Only candidates can access this"}, status=status.HTTP_403_FORBIDDEN)
 
-        apps = sync_db_call(
-            Application.find(Application.candidate.id == request.user.id).to_list()
+        apps = sync_db_call(lambda: 
+            Application.find(Application.candidate.id == ObjectId(request.user.id)).to_list()
         )
 
         results = []
         for app in apps:
             job = None
             try:
-                job = sync_db_call(app.job.fetch()) if hasattr(app.job, 'fetch') else app.job
+                job = sync_db_call(lambda: app.job.fetch()) if hasattr(app.job, 'fetch') else app.job
             except:
                 pass
 

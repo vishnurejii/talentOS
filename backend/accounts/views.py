@@ -34,7 +34,7 @@ class RegisterView(APIView):
             return Response({"error": "email, password, and full_name are required."}, status=400)
 
         # Check uniqueness safely natively
-        existing = sync_db_call(CustomUser.find_one(CustomUser.email == email))
+        existing = sync_db_call(lambda: CustomUser.find_one(CustomUser.email == email))
         if existing:
             return Response({"error": "Email already registered."}, status=400)
 
@@ -44,7 +44,7 @@ class RegisterView(APIView):
             full_name=full_name,
             role=role,
         )
-        sync_db_call(user.insert())
+        sync_db_call(lambda: user.insert())
 
         # Generate tokens
         refresh = RefreshToken()
@@ -70,7 +70,7 @@ class LoginView(APIView):
         if not email or not password:
             return Response({"error": "email and password are required."}, status=400)
 
-        user = sync_db_call(CustomUser.find_one(CustomUser.email == email))
+        user = sync_db_call(lambda: CustomUser.find_one(CustomUser.email == email))
         if not user or not user.check_password(password):
             return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -98,5 +98,5 @@ class ProfileView(APIView):
         user = request.user
         if "full_name" in request.data:
             user.full_name = request.data["full_name"]
-        sync_db_call(user.save())
+        sync_db_call(lambda: user.save())
         return Response({"message": "Profile updated.", "user": to_dict(user)})
