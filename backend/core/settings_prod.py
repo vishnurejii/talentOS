@@ -6,7 +6,7 @@ from .settings import *
 import os
 
 # ── Security ─────────────────────────────────────────────────────────────────
-DEBUG = os.environ.get('DEBUG', 'False') != 'True'
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
 
 # Allow Render + Vercel domains
