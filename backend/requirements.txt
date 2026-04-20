@@ -11,3 +11,4 @@ gunicorn
 whitenoise
 django-cors-headers
 email-validator
+boto3
