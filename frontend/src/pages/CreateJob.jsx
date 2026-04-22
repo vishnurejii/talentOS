@@ -34,24 +34,24 @@ export default function CreateJob() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-8 flex items-center justify-center relative overflow-hidden">
-      <div className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-8 relative z-10">
-        <Link to="/jobs" className="text-indigo-400 text-sm hover:underline mb-6 inline-block">&larr; Back to jobs</Link>
+    <div className="min-h-screen bg-slate-50 text-slate-900 p-8 flex items-center justify-center relative overflow-hidden">
+      <div className="w-full max-w-2xl bg-white border border-slate-200 shadow-sm rounded-3xl p-8 relative z-10">
+        <Link to="/jobs" className="text-blue-600 text-sm hover:underline mb-6 inline-block">&larr; Back to jobs</Link>
         <h1 className="text-3xl font-bold mb-8">Post a New Job</h1>
         
         <form onSubmit={handleCreate} className="space-y-5">
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-300 ml-1">Job Title</label>
+            <label className="text-sm font-medium text-slate-600 ml-1">Job Title</label>
             <input 
-              required className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              required className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400"
               placeholder="e.g. Senior Frontend Engineer" value={title} onChange={e => setTitle(e.target.value)}
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-300 ml-1">Job Type</label>
+            <label className="text-sm font-medium text-slate-600 ml-1">Job Type</label>
             <select 
-              className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               value={jobType} onChange={e => setJobType(e.target.value)}
             >
               <option value="IT">IT (Coding Exam)</option>
@@ -60,22 +60,22 @@ export default function CreateJob() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-300 ml-1">Skills Required (comma separated)</label>
+            <label className="text-sm font-medium text-slate-600 ml-1">Skills Required (comma separated)</label>
             <input 
-              required className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              required className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400"
               placeholder="React, Node.js, TypeScript" value={skills} onChange={e => setSkills(e.target.value)}
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium text-slate-300 ml-1">Description</label>
+            <label className="text-sm font-medium text-slate-600 ml-1">Description</label>
             <textarea 
-              required className="w-full h-32 bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              required className="w-full h-32 bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400"
               placeholder="Job responsibilities and requirements..." value={description} onChange={e => setDescription(e.target.value)}
             />
           </div>
 
-          <button disabled={isLoading} className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-400 hover:to-blue-500 text-white font-medium rounded-xl py-3 mt-4 transition-all shadow-lg flex justify-center items-center">
+          <button disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl py-3 mt-4 transition-all shadow-lg flex justify-center items-center">
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create and Trigger Exam Gen'}
           </button>
         </form>
