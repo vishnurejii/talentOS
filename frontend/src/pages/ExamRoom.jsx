@@ -190,21 +190,21 @@ export default function ExamRoom() {
   const pad = (n) => String(n).padStart(2, '0');
 
   if (loading) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="animate-spin h-12 w-12 border-4 border-violet-500 border-t-transparent rounded-full" />
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full" />
     </div>
   );
 
   if (!loading && !session) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
-      <div className="bg-gray-900/80 backdrop-blur border border-red-800 rounded-2xl p-10 max-w-lg w-full text-center">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-slate-900">
+      <div className="bg-white border border-slate-200 rounded-2xl p-10 max-w-lg w-full text-center shadow-lg">
         <div className="text-6xl mb-4">⚠️</div>
-        <h1 className="text-2xl font-bold text-red-400 mb-3">Exam Unavailable</h1>
-        <p className="text-gray-400 mb-2">{warning || 'Unable to load the exam session.'}</p>
-        <p className="text-gray-500 text-sm mb-6">Please return to the dashboard and try again. If the issue persists, contact HR.</p>
+        <h1 className="text-2xl font-bold text-red-500 mb-3">Exam Unavailable</h1>
+        <p className="text-slate-600 mb-2">{warning || 'Unable to load the exam session.'}</p>
+        <p className="text-slate-500 text-sm mb-6">Please return to the dashboard and try again. If the issue persists, contact HR.</p>
         <button
           onClick={() => navigate('/dashboard')}
-          className="px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition"
+          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition"
         >
           Back to Dashboard
         </button>
@@ -213,32 +213,32 @@ export default function ExamRoom() {
   );
 
   if (finished) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
-      <div className="bg-gray-900/80 backdrop-blur border border-gray-800 rounded-2xl p-10 max-w-lg w-full text-center">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-slate-900">
+      <div className="bg-white border border-slate-200 rounded-2xl p-10 max-w-lg w-full text-center shadow-lg">
         {warningCount >= 3 ? (
           <>
             <div className="text-6xl mb-4">🚫</div>
             <h1 className="text-3xl font-bold text-red-500 mb-2">Disqualified</h1>
-            <p className="text-gray-400 mb-6">
+            <p className="text-slate-600 mb-6">
               You have been disqualified from this exam due to multiple proctoring violations (Tab Switching).
             </p>
           </>
         ) : (
           <>
             <div className="text-6xl mb-4">🎉</div>
-            <h1 className="text-3xl font-bold text-white mb-2">Exam Completed!</h1>
-            <p className="text-gray-400 mb-6">Your answers have been submitted and scored successfully.</p>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Exam Completed!</h1>
+            <p className="text-slate-600 mb-6">Your answers have been submitted and scored successfully.</p>
           </>
         )}
-        <div className="bg-gray-800/60 rounded-xl p-6 mb-6">
-          <p className="text-sm text-gray-400">Final Score</p>
-          <p className={`text-5xl font-bold ${warningCount >= 3 ? 'text-red-500' : 'bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent'}`}>
+        <div className="bg-slate-100 rounded-xl p-6 mb-6">
+          <p className="text-sm text-slate-500">Final Score</p>
+          <p className={`text-5xl font-bold ${warningCount >= 3 ? 'text-red-500' : 'text-blue-600'}`}>
             {warningCount >= 3 ? '0' : (result?.total_score ?? '—')}
           </p>
         </div>
         <button
           onClick={() => navigate('/dashboard')}
-          className="w-full py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-medium transition"
+          className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition shadow-lg shadow-blue-600/20"
         >
           Return to Dashboard
         </button>
@@ -247,23 +247,23 @@ export default function ExamRoom() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white relative">
+    <div className="min-h-screen bg-slate-50 text-slate-900 relative">
       {/* Proctoring Warning Modal */}
       {violationWarning && warningCount < 3 && (
-        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 text-center">
-          <div className="bg-gray-900 border border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.2)] rounded-3xl p-10 max-w-md">
+        <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-6 text-center">
+          <div className="bg-white border border-red-200 shadow-xl rounded-3xl p-10 max-w-md">
             <div className="text-6xl mb-4 animate-bounce">⚠️</div>
-            <h2 className="text-2xl font-bold text-red-400 mb-4">Proctoring Violation</h2>
-            <p className="text-gray-300 mb-6 leading-relaxed">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Proctoring Violation</h2>
+            <p className="text-slate-600 mb-6 leading-relaxed">
               We detected that you switched tabs or left the exam area. This is strictly prohibited.
             </p>
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-8">
-              <span className="text-sm text-red-300 font-medium">Warnings: {warningCount} / 3</span>
-              <p className="text-xs text-red-400/70 mt-1">Next violation will result in immediate disqualification.</p>
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8">
+              <span className="text-sm text-red-700 font-medium">Warnings: {warningCount} / 3</span>
+              <p className="text-xs text-red-500 mt-1">Next violation will result in immediate disqualification.</p>
             </div>
             <button
               onClick={() => setViolationWarning(false)}
-              className="w-full py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-bold shadow-lg shadow-red-600/30 transition-all active:scale-95"
+              className="w-full py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold shadow-lg shadow-red-600/20 transition-all active:scale-95"
             >
               I Understand & Proceed
             </button>
@@ -271,19 +271,19 @@ export default function ExamRoom() {
         </div>
       )}
       {/* Top bar */}
-      <div className="sticky top-0 z-50 bg-gray-900/90 backdrop-blur border-b border-gray-800 px-6 py-3 flex items-center justify-between">
+      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200 px-6 py-3 flex items-center justify-between shadow-sm">
         <div>
           <h2 className="text-lg font-semibold">{session?.job_title || 'Exam'}</h2>
-          <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">
+          <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">
             Question {currentIdx + 1} of {questions.length}
           </p>
         </div>
 
         {/* Timer */}
         <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-mono text-xl font-bold ${
-          timer.total <= 60 ? 'bg-red-900/40 text-red-400 animate-pulse' :
-          timer.total <= 300 ? 'bg-amber-900/40 text-amber-400' :
-          'bg-gray-800/60 text-white'
+          timer.total <= 60 ? 'bg-red-50 text-red-600 animate-pulse' :
+          timer.total <= 300 ? 'bg-amber-50 text-amber-600' :
+          'bg-slate-100 text-slate-900'
         }`}>
           ⏱️ {pad(timer.minutes)}:{pad(timer.seconds)}
         </div>
@@ -298,7 +298,7 @@ export default function ExamRoom() {
 
       {/* Warning banner */}
       {warning && (
-        <div className="bg-amber-600/20 border border-amber-500/40 text-amber-300 text-center py-2 text-sm animate-pulse">
+        <div className="bg-amber-50 border border-amber-200 text-amber-700 text-center py-2 text-sm animate-pulse">
           ⚠️ {warning}
         </div>
       )}
@@ -306,16 +306,16 @@ export default function ExamRoom() {
       {/* Question area */}
       <div className="max-w-6xl mx-auto p-6 mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column: Question Text */}
-        <div className="bg-gray-900/60 backdrop-blur border border-gray-800 rounded-2xl p-8 flex flex-col">
+        <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-8 flex flex-col">
           {q && (
             <>
               <div className="flex items-center gap-3 mb-4">
                 <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${
-                  q.question_type === 'MCQ' ? 'bg-blue-600/30 text-blue-300' : 'bg-emerald-600/30 text-emerald-300'
+                  q.question_type === 'MCQ' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                 }`}>
                   {q.question_type}
                 </span>
-                <span className="text-xs text-gray-500 font-bold">+{q.points} PTS</span>
+                <span className="text-xs text-slate-500 font-bold">+{q.points} PTS</span>
               </div>
 
               <p className="text-xl font-medium mb-6 leading-relaxed">{q.question_text}</p>
@@ -333,12 +333,12 @@ export default function ExamRoom() {
                       }}
                       className={`w-full text-left p-4 rounded-xl border transition ${
                         answers[q.id] === idx
-                          ? 'border-violet-500 bg-violet-600/20 text-white shadow-[0_0_20px_rgba(139,92,246,0.1)]'
-                          : 'border-gray-700 bg-gray-800/40 text-gray-300 hover:border-gray-500'
+                          ? 'border-blue-500 bg-blue-50 text-slate-900 shadow-sm shadow-blue-500/10'
+                          : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:bg-slate-50'
                       }`}
                     >
                       <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg mr-4 transition-all ${
-                        answers[q.id] === idx ? 'bg-violet-600 text-white' : 'bg-gray-700 text-gray-400'
+                        answers[q.id] === idx ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 border border-slate-200'
                       }`}>
                         {String.fromCharCode(65 + idx)}
                       </span>
@@ -444,22 +444,22 @@ export default function ExamRoom() {
           )}
 
           {q?.question_type === 'MCQ' && (
-            <div className="bg-gray-900/40 border border-dashed border-gray-800 rounded-2xl p-10 flex flex-col items-center justify-center text-center">
+            <div className="bg-white border border-dashed border-slate-300 rounded-2xl p-10 flex flex-col items-center justify-center text-center shadow-sm">
               <p className="text-5xl mb-4">📝</p>
-              <h3 className="text-lg font-medium text-gray-300">Multiple Choice Question</h3>
-              <p className="text-sm text-gray-500 max-w-xs mt-2">Pick an option on the left side. Your progress is saved automatically upon clicking.</p>
+              <h3 className="text-lg font-medium text-slate-900">Multiple Choice Question</h3>
+              <p className="text-sm text-slate-500 max-w-xs mt-2">Pick an option on the left side. Your progress is saved automatically upon clicking.</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Navigation Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gray-900/80 backdrop-blur border-t border-gray-800 p-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur border-t border-slate-200 p-4 shadow-sm">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <button
             onClick={() => handleNavigation(Math.max(0, currentIdx - 1))}
             disabled={currentIdx === 0}
-            className="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold transition disabled:opacity-30"
+            className="px-6 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-900 rounded-xl font-bold transition disabled:opacity-30 shadow-sm"
           >
             ← Previous
           </button>
@@ -472,10 +472,10 @@ export default function ExamRoom() {
                 onClick={() => handleNavigation(idx)}
                 className={`w-10 h-10 rounded-xl text-sm font-bold transition ${
                   idx === currentIdx
-                    ? 'bg-violet-600 text-white translate-y-[-2px] shadow-lg shadow-violet-500/20'
+                    ? 'bg-blue-600 text-white translate-y-[-2px] shadow-lg shadow-blue-500/20'
                     : answers[questions[idx]?.id] !== undefined
-                    ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
+                    : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'
                 }`}
               >
                 {idx + 1}
@@ -486,7 +486,7 @@ export default function ExamRoom() {
           <button
             onClick={() => handleNavigation(Math.min(questions.length - 1, currentIdx + 1))}
             disabled={currentIdx === questions.length - 1}
-            className="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold transition disabled:opacity-30"
+            className="px-6 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-900 rounded-xl font-bold transition disabled:opacity-30 shadow-sm"
           >
             Next →
           </button>
