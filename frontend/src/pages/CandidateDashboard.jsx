@@ -40,14 +40,12 @@ export default function CandidateDashboard() {
   };
 
   const statusConfig = {
-  const statusConfig = {
     APPLIED: { label: 'Application Received', color: 'bg-blue-50 text-blue-700 border-blue-200', icon: FileText },
     ATS_PROCESSING: { label: 'AI Resume Scanning', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: Search, animate: true },
     EXAM_PENDING: { label: 'Assessment Ready', color: 'bg-purple-50 text-purple-700 border-purple-200 font-bold', icon: Clock },
     EXAM_DONE: { label: 'Assessment Completed', color: 'bg-cyan-50 text-cyan-700 border-cyan-200', icon: CheckCircle2 },
     SHORTLISTED: { label: 'Shortlisted!', color: 'bg-emerald-50 text-emerald-700 border-emerald-200 font-black', icon: Trophy },
     REJECTED: { label: 'Not Selected', color: 'bg-red-50 text-red-700 border-red-200', icon: XCircle },
-  };
   };
 
   if (loading) return (
